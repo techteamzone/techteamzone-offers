@@ -1,28 +1,46 @@
-import Card from "./ui/Card";
-import { offers } from "../data/offers";
+import Card from "./ui/Card"
+
+import { offers } from "../data/offers"
+
+const categories = [
+  "Gift Cards",
+  "Home Decor & Interior Design",
+  "Food & Recipes",
+  "Fashion & Beauty",
+  "DIY & Hobbies",
+  "Crypto",
+  "Gaming",
+  "Health",
+  "Sweepstakes",
+]
 
 export default function Grid() {
   return (
-    <section className="relative py-16">
-      {/* soft background */}
-      <div className="absolute inset-0 -z-10 bg-gradient-to-b from-slate-50 via-white to-slate-100" />
+    <div className="max-w-7xl mx-auto px-4 py-12 space-y-16">
+      {categories.map((category) => {
+        const categoryOffers = offers.filter(
+          (offer) => offer.category === category
+        )
 
-      <div className="max-w-7xl mx-auto px-4">
-        <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-8">
-          🔥 Top Reward Offers
-        </h2>
+        // যদি offer না থাকে → section দেখাবে না
+        if (categoryOffers.length === 0) return null
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
-          {offers.map((offer) => (
-            <Card
-              key={offer.id}
-              title={offer.title}
-              image={offer.image}
-              url={offer.url}
-            />
-          ))}
-        </div>
-      </div>
-    </section>
-  );
+        return (
+          <section key={category}>
+            {/* Category Title */}
+            <h2 className="text-2xl md:text-3xl font-bold mb-6 text-white">
+              {category}
+            </h2>
+
+            {/* Offers Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+              {categoryOffers.map((offer) => (
+                <Card key={offer.id} offer={offer} />
+              ))}
+            </div>
+          </section>
+        )
+      })}
+    </div>
+  )
 }

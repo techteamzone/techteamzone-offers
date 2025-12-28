@@ -1,114 +1,71 @@
-import { motion } from "framer-motion";
+import { motion, useMotionValue, useTransform } from "framer-motion"
+import { useEffect } from "react"
 
-export default function Hero({ onSearch }) {
+export default function Hero() {
+  const mouseX = useMotionValue(0)
+  const mouseY = useMotionValue(0)
+
+  const rotateX = useTransform(mouseY, [-300, 300], [15, -15])
+  const rotateY = useTransform(mouseX, [-300, 300], [-15, 15])
+
+  useEffect(() => {
+    const handleMouse = (e) => {
+      mouseX.set(e.clientX - window.innerWidth / 2)
+      mouseY.set(e.clientY - window.innerHeight / 2)
+    }
+    window.addEventListener("mousemove", handleMouse)
+    return () => window.removeEventListener("mousemove", handleMouse)
+  }, [])
+
   return (
-    <section className="relative overflow-hidden bg-gradient-to-br from-[#0b0f1a] via-[#0e1324] to-black text-white">
-      
-      {/* Glow background */}
-      <div className="absolute inset-0">
-        <div className="absolute -top-32 -left-32 w-96 h-96 bg-purple-600/30 rounded-full blur-3xl" />
-        <div className="absolute top-1/3 -right-32 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl" />
-      </div>
+    <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden bg-gradient-to-b from-[#0b0f1a] via-[#0b0f1a] to-black">
+      {/* glow */}
+      <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-[700px] h-[700px] bg-indigo-600/20 blur-[160px]" />
 
-      <div className="relative max-w-7xl mx-auto px-6 py-24 grid md:grid-cols-2 gap-16 items-center">
-
-        {/* LEFT */}
-        <div>
-          <motion.h1
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.9, ease: "easeOut" }}
-            viewport={{ once: false }}
-            className="text-4xl md:text-6xl font-extrabold leading-tight"
-          >
-            <span className="block text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-400 drop-shadow-[0_10px_30px_rgba(120,80,255,0.4)]">
+      <div
+        className="relative z-10 max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-16 items-center"
+        style={{ perspective: "1400px" }}
+      >
+        {/* BRAND NAME */}
+        <motion.div
+          style={{ rotateX, rotateY }}
+          initial={{ opacity: 0, x: -160, rotateY: -60 }}
+          animate={{ opacity: 1, x: 0, rotateY: 0 }}
+          transition={{ duration: 2, ease: [0.16, 1, 0.3, 1] }}
+          className="space-y-6 origin-left"
+        >
+          <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight leading-tight">
+            <span className="block text-white drop-shadow-[0_20px_50px_rgba(0,0,0,0.9)]">
               TechTeamZone
             </span>
-            <span className="block mt-3 text-gray-300 text-2xl md:text-3xl font-medium">
-              Premium Rewards & Campaign Hub
+            <span className="block bg-gradient-to-r from-indigo-400 to-purple-500 bg-clip-text text-transparent">
+              Premium Rewards Hub
             </span>
-          </motion.h1>
+          </h1>
 
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2, duration: 0.8 }}
-            viewport={{ once: false }}
-            className="mt-6 text-gray-400 max-w-xl"
-          >
-            Exclusive reward campaigns for Tier-1 users.  
-            Verified offers. Secure redirects. Limited availability.
-          </motion.p>
+          <p className="text-white/70 text-lg max-w-md">
+            Enterprise-grade reward discovery platform built for scale.
+          </p>
 
-          {/* SEARCH */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.35 }}
-            viewport={{ once: false }}
-            className="mt-8 flex"
+          <motion.a
+            href="#offers"
+            whileHover={{ scale: 1.08 }}
+            whileTap={{ scale: 0.96 }}
+            className="inline-block px-8 py-3 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-semibold shadow-xl hover:shadow-2xl transition"
           >
-            <input
-              type="text"
-              placeholder="Search rewards (Amazon, Walmart...)"
-              onChange={(e) => onSearch?.(e.target.value)}
-              className="w-full px-5 py-4 rounded-l-xl bg-white/10 border border-white/10 focus:outline-none focus:border-purple-400 backdrop-blur"
-            />
-            <button
-              className="px-6 rounded-r-xl bg-gradient-to-r from-purple-500 to-blue-500 font-semibold hover:opacity-90 transition"
-              onClick={() => window.open("/contact", "_blank")}
-            >
-              Search
-            </button>
-          </motion.div>
-
-          {/* EMAIL + ZIP */}
-          <motion.form
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5 }}
-            viewport={{ once: false }}
-            className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-4"
-          >
-            <input
-              type="email"
-              required
-              placeholder="Gmail address"
-              className="px-4 py-3 rounded-lg bg-white/10 border border-white/10 focus:outline-none"
-            />
-            <input
-              type="text"
-              required
-              placeholder="ZIP Code"
-              className="px-4 py-3 rounded-lg bg-white/10 border border-white/10 focus:outline-none"
-            />
-            <button
-              type="submit"
-              onClick={() => window.open("/privacy", "_blank")}
-              className="rounded-lg bg-gradient-to-r from-purple-500 to-blue-500 font-semibold hover:scale-[1.02] transition"
-            >
-              Unlock Offers
-            </button>
-          </motion.form>
-        </div>
+            Explore Offers
+          </motion.a>
+        </motion.div>
 
         {/* RIGHT IMAGE */}
-        <motion.div
-          initial={{ opacity: 0, y: 60 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1.2, ease: "easeOut" }}
-          viewport={{ once: false }}
-          className="relative"
-        >
-          <motion.img
+        <div className="flex justify-center">
+          <img
             src="/images/hero-banner.png"
-            alt="Premium Rewards"
-            animate={{ y: [0, -15, 0] }}
-            transition={{ repeat: Infinity, duration: 6, ease: "easeInOut" }}
-            className="w-full max-w-md mx-auto drop-shadow-[0_40px_80px_rgba(0,0,0,0.7)]"
+            alt="Brand visual"
+            className="w-[320px] md:w-[420px] drop-shadow-[0_50px_100px_rgba(0,0,0,0.65)]"
           />
-        </motion.div>
+        </div>
       </div>
     </section>
-  );
+  )
 }
